@@ -29,15 +29,14 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Print("Error loading .env file")
-		return
+		log.Print("No .env file found, continuing...")
+		// Do NOT return here — continue running
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000" // fallback
 	}
-
 	http.HandleFunc("/clip", Videoclipper)
 
 	http.HandleFunc("/download/", func(w http.ResponseWriter, r *http.Request) {
