@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { AxiosError } from "axios";
 import Link from "next/link";
+import Image from 'next/image'
+
 
 export default function Home() {
   const [tweetUrl, setTweetUrl] = useState<string>("");
@@ -88,9 +90,16 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
+     <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
       <div className="flex flex-col items-center mb-12">
-        <div className="text-7xl md:text-8xl font-black mb-6 text-center">
+        <div className="flex items-center text-7xl md:text-8xl font-black mb-6 text-center">
+            <Image
+                className="rounded-full mr-4"
+                src="/favicon.png"
+                width={100}
+                height={100}
+                alt="ClipX Logo"
+              />
           <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
             ClipX
           </span>
@@ -179,6 +188,9 @@ export default function Home() {
           </p>
           <p className="text-slate-200 text-md">
             Created by - <Link href="http://localhost:3000" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">Krishna</Link>
+          </p>
+          <p className="text-slate-200 text-md">
+            Follow at - <Link href="http://localhost:3000" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">ClipX</Link>
           </p>
         </div>
       </div>
