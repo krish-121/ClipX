@@ -175,7 +175,7 @@ export default function Home() {
 
         <div className="text-center mt-8">
           <p className="text-slate-500 text-md mb-4">
-            Fast, secure, and completely free to use
+            Fast and completely free to use
           </p>
           <p className="text-slate-200 text-md">
             Created by - <Link href="http://localhost:3000" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">Krishna</Link>
