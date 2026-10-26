@@ -46,3 +46,17 @@ Run `npm run build` from `client/` and `go build -trimpath -buildvcs=false -o se
 from `server/` (use `server.exe` on Windows). The Go flags prevent local source
 paths and Git metadata from being embedded in the binary.
 
+## Local benchmarks
+
+The existing Go backend completed **80/80 clip/download jobs** across generated
+720p and 1080p test videos, with **934 ms median and 975 ms p95 clip-ready latency**
+in sequential local tests. Each output passed full decoding and integrity checks.
+
+For a 15-second range requested from the 60-second 1080p fixture, median
+clip-ready latency was **945 ms**, and the returned file was **76.3% smaller**
+than the full source. These measurements use real yt-dlp and FFmpeg over local
+HTTP; live X/Twitter downloads and the Next.js/browser path are outside the test.
+
+See the [methodology and raw results](benchmarks/README.md) and
+[copy-ready CV entry](benchmarks/CV.md).
+
