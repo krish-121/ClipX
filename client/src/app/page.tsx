@@ -176,7 +176,7 @@ export default function Home() {
           {downloadUrl && (
             <div className="mt-6 text-center">
               <a
-                href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/download/${downloadUrl.split("/").pop()}`}
+                href={`${process.env.NEXT_PUBLIC_API_URL}/download/${downloadUrl.split("/").pop()}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md"
