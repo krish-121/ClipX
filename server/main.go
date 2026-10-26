@@ -60,7 +60,8 @@ func main() {
 func Videoclipper(w http.ResponseWriter, r *http.Request) {
 	baseURL := os.Getenv("BASE_URL")
 	if baseURL == "" {
-		baseURL = "http://localhost:8000	"
+		baseURL = "http://localhost:8000"
+
 	}
 	enableCORS(w)
 	if r.Method == http.MethodOptions {
