@@ -22,8 +22,7 @@ export default function Home() {
         end: end.trim(),
       });
 
-      // Expecting something like "/download/clipped_123.mp4"
-      const path = response.data.downloadPath;
+      const path = response.data.downloadPath; // Example: "/download/clipped_1234.mp4"
       setDownloadPath(path);
 
       setTweetUrl("");
@@ -73,7 +72,7 @@ export default function Home() {
         {downloadPath && (
           <div className="text-center mt-6">
             <a
-              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${downloadPath}`}
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/download/${downloadPath.split("/").pop()}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md"
