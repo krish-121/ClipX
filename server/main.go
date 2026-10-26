@@ -43,6 +43,16 @@ func main() {
 		filePath := "download" + strings.TrimPrefix(r.URL.Path, "/download")
 		w.Header().Set("Content-Disposition", "attachment; filename="+filePath[strings.LastIndex(filePath, "/")+1:])
 		http.ServeFile(w, r, filePath)
+		// After serving, delete the file in a goroutine to avoid blocking the response
+		go func() {
+			time.Sleep(5 * time.Second) // short delay to allow download to begin
+			err := os.Remove(filePath)
+			if err != nil {
+				log.Printf("Failed to delete file %s: %v", filePath, err)
+			} else {
+				log.Printf("Deleted file %s after download", filePath)
+			}
+		}()
 	})
 	http.ListenAndServe(":"+port, nil)
 }
