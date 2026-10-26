@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ClipX",
-  description: "Download and clip any X/Twitter video in just 1 click!",
+  description: "Download and clip any X/Twitter video in just 1 click! ",
 };
 
 export default function RootLayout({
