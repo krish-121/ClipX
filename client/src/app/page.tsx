@@ -1,21 +1,21 @@
 "use client";
-
 import { useState } from "react";
 import axios from "axios";
-import Image from "next/image";
+import { AxiosError } from "axios";
 import Link from "next/link";
+import Image from 'next/image'
 
 export default function Home() {
-  const [tweetUrl, setTweetUrl] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [timeError, setTimeError] = useState("");
-  const [downloadUrl, setDownloadUrl] = useState("");
+  const [tweetUrl, setTweetUrl] = useState<string>("");
+  const [start, setStart] = useState<string>("");
+  const [end, setEnd] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [timeError, setTimeError] = useState<string>("");
+  const [downloadUrl, setDownloadUrl] = useState<string>(""); // Added state for download URL
 
   const validateTimeFormat = (time: string): boolean => {
-    if (!time.trim()) return true;
+    if (!time.trim()) return true; // Optional
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
     return timeRegex.test(time);
   };
@@ -28,14 +28,10 @@ export default function Home() {
     return true;
   };
 
-  const handleTimeChange = (
-    value: string,
-    setter: (v: string) => void,
-    label: string
-  ) => {
+  const handleTimeChange = (value: string, setter: (value: string) => void, field: string): void => {
     setter(value);
     if (value.trim() && !validateTimeFormat(value)) {
-      setTimeError(`${label} must be in HH:MM:SS format (e.g., 00:01:30)`);
+      setTimeError(`${field} must be in HH:MM:SS format (e.g., 00:01:30)`);
     } else {
       setTimeError("");
     }
@@ -54,44 +50,55 @@ export default function Home() {
 
     setLoading(true);
     setError("");
-    setDownloadUrl("");
+    setDownloadUrl(""); // Reset download URL
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     try {
-      const response = await axios.post("/api/clip", {
+      const response = await axios.post(`${apiUrl}/clip`, {
         tweetUrl: tweetUrl.trim(),
         start: start.trim(),
         end: end.trim(),
       });
-
       const { downloadUrl } = response.data;
+
+      // Store the download URL in state instead of auto-downloading
       setDownloadUrl(downloadUrl);
 
-      setTweetUrl("");
-      setStart("");
-      setEnd("");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error:", err);
-      if (err.response?.data) {
-        setError(err.response.data);
+      const error = err as AxiosError;
+      if (error.response?.data) {
+        setError(error.response.data as string);
+      } else if (error.message) {
+        setError(`Error: ${error.message}`);
       } else {
-        setError("Something went wrong.");
+        setError("An error occurred while processing the video");
       }
     } finally {
       setLoading(false);
     }
   };
 
+  const handleReset = () => {
+    setTweetUrl("");
+    setStart("");
+    setEnd("");
+    setDownloadUrl("");
+    setError("");
+    setTimeError("");
+  };
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
+     <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
       <div className="flex flex-col items-center mb-12">
         <div className="flex items-center text-7xl md:text-8xl font-black mb-6 text-center">
-          <Image
-            className="rounded-full mr-4"
-            src="/favicon.png"
-            width={100}
-            height={100}
-            alt="ClipX Logo"
-          />
+            <Image
+                className="rounded-full mr-4"
+                src="/favicon.png"
+                width={100}
+                height={100}
+                alt="ClipX Logo"
+              />
           <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
             ClipX
           </span>
@@ -146,20 +153,38 @@ export default function Home() {
             </div>
           </div>
 
-          <button
-            onClick={handleClip}
-            disabled={loading || !isFormValid()}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 shadow-lg hover:shadow-blue-500/25"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                Processing...
-              </div>
-            ) : (
-              "Download Clip"
-            )}
-          </button>
+          {!downloadUrl ? (
+            <button
+              onClick={handleClip}
+              disabled={loading || !isFormValid()}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 shadow-lg hover:shadow-blue-500/25"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
+                  Processing...
+                </div>
+              ) : (
+                "Generate Clip"
+              )}
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <a
+                href={downloadUrl}
+                download
+                className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/25 text-center"
+              >
+                Download Video
+              </a>
+              <button
+                onClick={handleReset}
+                className="w-full bg-slate-600 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
+              >
+                Create Another Clip
+              </button>
+            </div>
+          )}
 
           {timeError && (
             <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-xl">
@@ -172,19 +197,6 @@ export default function Home() {
               <p className="text-red-400 text-sm">{error}</p>
             </div>
           )}
-
-          {downloadUrl && (
-            <div className="mt-6 text-center">
-              <a
-                href={downloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md"
-              >
-                🎬 Download Your Clip
-              </a>
-            </div>
-          )}
         </div>
 
         <div className="text-center mt-8">
@@ -192,26 +204,10 @@ export default function Home() {
             Fast and completely free to use
           </p>
           <p className="text-slate-200 text-md">
-            Created by -{" "}
-            <Link
-              href="http://localhost:3000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-blue-400"
-            >
-              Krishna
-            </Link>
+            Created by - <Link href="http://localhost:3000" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">Krishna</Link>
           </p>
           <p className="text-slate-200 text-md">
-            Follow at -{" "}
-            <Link
-              href="http://localhost:3000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-blue-400"
-            >
-              ClipX
-            </Link>
+            Follow at - <Link href="http://localhost:3000" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">ClipX</Link>
           </p>
         </div>
       </div>
