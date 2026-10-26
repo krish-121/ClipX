@@ -1,0 +1,18 @@
+FROM golang:1.21
+
+RUN apt-get update && apt-get install -y python3-pip && apt-get clean
+
+# Install latest yt-dlp or pinned version
+RUN pip3 install --upgrade yt-dlp
+# Or pin exact version:
+# RUN pip3 install yt-dlp==2025.05.22
+
+WORKDIR /app
+
+COPY . .
+
+RUN go build -o server .
+
+EXPOSE 8000
+
+CMD ["./server"]

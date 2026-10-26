@@ -1,0 +1,17 @@
+# Ignore node_modules in client folder
+client/node_modules/
+
+# Ignore build output of frontend
+client/.next/
+client/out/
+
+# Ignore Go build outputs
+server/server
+server/download/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore env files
+*.env
