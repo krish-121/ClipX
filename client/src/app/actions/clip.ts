@@ -1,10 +1,11 @@
 // app/actions/clip.ts
+
 "use server";
 
 import axios from "axios";
 
 export async function clipTweet(tweetUrl: string, start: string, end: string) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
 
   try {
     const response = await axios.post(`${apiUrl}/clip`, {
