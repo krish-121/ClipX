@@ -1,9 +1,10 @@
+
+
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { AxiosError } from "axios";
 import Link from "next/link";
-import Image from 'next/image'
+import Image from 'next/image';
 
 export default function Home() {
   const [tweetUrl, setTweetUrl] = useState<string>("");
@@ -12,7 +13,7 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [timeError, setTimeError] = useState<string>("");
-  const [downloadUrl, setDownloadUrl] = useState<string>(""); // Added state for download URL
+  const [downloadUrl, setDownloadUrl] = useState<string>("");
 
   const validateTimeFormat = (time: string): boolean => {
     if (!time.trim()) return true; // Optional
@@ -50,8 +51,10 @@ export default function Home() {
 
     setLoading(true);
     setError("");
-    setDownloadUrl(""); // Reset download URL
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    setDownloadUrl("");
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 
     try {
       const response = await axios.post(`${apiUrl}/clip`, {
@@ -60,19 +63,20 @@ export default function Home() {
         end: end.trim(),
       });
       const { downloadUrl } = response.data;
-
-      // Store the download URL in state instead of auto-downloading
       setDownloadUrl(downloadUrl);
 
-    } catch (err: unknown) {
+    } catch (err) {
       console.error("Error:", err);
-      const error = err as AxiosError;
-      if (error.response?.data) {
-        setError(error.response.data as string);
-      } else if (error.message) {
-        setError(`Error: ${error.message}`);
+      if (axios.isAxiosError(err)) {
+        if (err.response?.data) {
+          setError(typeof err.response.data === 'string' ? err.response.data : 'An error occurred');
+        } else if (err.message) {
+          setError(`Error: ${err.message}`);
+        } else {
+          setError("Network error occurred");
+        }
       } else {
-        setError("An error occurred while processing the video");
+        setError("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
@@ -89,16 +93,16 @@ export default function Home() {
   };
 
   return (
-     <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex flex-col items-center justify-center px-4">
       <div className="flex flex-col items-center mb-12">
         <div className="flex items-center text-7xl md:text-8xl font-black mb-6 text-center">
-            <Image
-                className="rounded-full mr-4"
-                src="/favicon.png"
-                width={100}
-                height={100}
-                alt="ClipX Logo"
-              />
+          <Image
+            className="rounded-full mr-4"
+            src="/favicon.png"
+            width={100}
+            height={100}
+            alt="ClipX Logo"
+          />
           <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
             ClipX
           </span>
@@ -170,13 +174,6 @@ export default function Home() {
             </button>
           ) : (
             <div className="space-y-4">
-              <a
-                href={downloadUrl}
-                download
-                className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/25 text-center"
-              >
-                Download Video
-              </a>
               <button
                 onClick={handleReset}
                 className="w-full bg-slate-600 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
@@ -195,6 +192,21 @@ export default function Home() {
           {error && (
             <div className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-xl">
               <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Download button at the end */}
+          {downloadUrl && (
+            <div className="mt-6 text-center">
+              <a
+                href={downloadUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md"
+              >
+                Download Your Clip
+              </a>
             </div>
           )}
         </div>
