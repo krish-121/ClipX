@@ -13,5 +13,28 @@ server/download/
 .DS_Store
 Thumbs.db
 
-# Ignore env files
+# Local configuration and credentials
+.env
+.env.*
 *.env
+!.env.example
+!**/.env.example
+*.pem
+*.key
+.npmrc
+.netrc
+
+# Logs, caches, editor settings, and local test output
+*.log
+*.tsbuildinfo
+.cache/
+.tmp/
+.vscode/
+.idea/
+.vercel/
+coverage/
+server/*.exe
+server/server.test
+*.swp
+*.swo
+Desktop.ini

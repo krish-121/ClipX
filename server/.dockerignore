@@ -1,0 +1,14 @@
+.env
+.env.*
+*.env
+!.env.example
+*.log
+*.exe
+*.test
+*.pem
+*.key
+server
+download/
+.cache/
+.tmp/
+.git/

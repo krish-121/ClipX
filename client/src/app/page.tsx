@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
 import { clipTweet } from "./actions/clip";
 
 export default function Home() {
@@ -56,10 +54,7 @@ export default function Home() {
     try {
       const response = await clipTweet(tweetUrl, start, end);
 
-      console.log(response);
-
-      // Ensure the download URL is properly formatted as an absolute URL
-      const formattedUrl = `http://${response.downloadUrl}`;
+      const formattedUrl = response.downloadUrl;
 
       setDownloadUrl(formattedUrl);
 
@@ -197,28 +192,6 @@ export default function Home() {
 
         <div className="text-center mt-8">
           <p className="text-slate-500 text-md mb-4">Fast and completely free to use</p>
-          <p className="text-slate-200 text-md">
-            Created by -{" "}
-            <Link
-              href="http://localhost:3000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-blue-400"
-            >
-              Krishna
-            </Link>
-          </p>
-          <p className="text-slate-200 text-md">
-            Follow at -{" "}
-            <Link
-              href="http://localhost:3000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-blue-400"
-            >
-              ClipX
-            </Link>
-          </p>
         </div>
       </div>
     </div>
