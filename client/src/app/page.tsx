@@ -12,6 +12,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [timeError, setTimeError] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
 
   const validateTimeFormat = (time: string): boolean => {
     if (!time.trim()) return true;
@@ -53,6 +54,7 @@ export default function Home() {
 
     setLoading(true);
     setError("");
+    setDownloadUrl("");
 
     try {
       const response = await axios.post("/api/clip", {
@@ -62,13 +64,7 @@ export default function Home() {
       });
 
       const { downloadUrl } = response.data;
-
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = "";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setDownloadUrl(downloadUrl);
 
       setTweetUrl("");
       setStart("");
@@ -174,6 +170,19 @@ export default function Home() {
           {error && (
             <div className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-xl">
               <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          {downloadUrl && (
+            <div className="mt-6 text-center">
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md"
+              >
+                🎬 Download Your Clip
+              </a>
             </div>
           )}
         </div>
